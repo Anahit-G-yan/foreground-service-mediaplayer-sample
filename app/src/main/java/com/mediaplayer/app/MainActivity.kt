@@ -22,15 +22,19 @@ private val MEDIA_PERMISSIONS_LEGACY = arrayOf(Manifest.permission.READ_EXTERNAL
 class MainActivity : AppCompatActivity() {
     private var isReady = false
 
-    private val requestPermissions =
+    private val requestMediaPermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
             isReady = true
             if (results.values.any { it }) {
                 setContentView(R.layout.activity_main)
+                requestNotificationPermissionIfNeeded()
             } else {
                 showPermissionRationale()
             }
         }
+
+    private val requestNotificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -40,8 +44,23 @@ class MainActivity : AppCompatActivity() {
         if (hasMediaPermission()) {
             isReady = true
             setContentView(R.layout.activity_main)
+            requestNotificationPermissionIfNeeded()
         } else {
-            requestPermissions.launch(mediaPermissions())
+            requestMediaPermissions.launch(mediaPermissions())
+        }
+    }
+
+    /**
+     * Without this, Media3's playback notification is silently dropped on Android 13+: the
+     * foreground service still runs and music still plays, there's just no notification icon.
+     * Kept separate from the media-access flow above since playback works fine without it - no
+     * need to block the UI or show a rationale dialog over it.
+     */
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            requestNotificationPermission.launch(permission)
         }
     }
 
