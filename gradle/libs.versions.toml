@@ -27,6 +27,7 @@ glide = "4.16.0"
 
 junit = "4.13.2"
 androidxTestExtJunit = "1.3.0"
+androidxTestRunner = "1.7.0"
 espresso = "3.7.0"
 mockk = "1.14.11"
 turbine = "1.2.1"
@@ -72,6 +73,7 @@ glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", versi
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }

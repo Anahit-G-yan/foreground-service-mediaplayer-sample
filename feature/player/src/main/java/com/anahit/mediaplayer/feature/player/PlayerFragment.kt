@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.anahit.mediaplayer.core.media.PlaybackState
 import com.anahit.mediaplayer.core.media.RepeatMode
+import com.anahit.mediaplayer.core.ui.applySystemBarsPadding
 import com.anahit.mediaplayer.core.ui.formatAsMinutesAndSeconds
 import com.anahit.mediaplayer.core.ui.viewBinding
 import com.anahit.mediaplayer.domain.model.Track
@@ -38,6 +40,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.favoriteIconContainer.applySystemBarsPadding(top = true)
+        binding.controlsContainer.applySystemBarsPadding(bottom = true)
 
         initClicks()
         observeState()
@@ -83,7 +88,11 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         )
     }
 
-    /** Holding the button repeats [action] every [HOLD_SEEK_REPEAT_INTERVAL_MILLIS] until release. */
+    /**
+     * Holding the button repeats [action] every [HOLD_SEEK_REPEAT_INTERVAL_MILLIS] until release.
+     * The first repeat waits out the system long-press timeout so a plain tap (released before
+     * that) never fires [action] and only the view's own click listener runs.
+     */
     private fun holdToRepeat(
         view: View,
         action: () -> Unit,
@@ -94,6 +103,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 MotionEvent.ACTION_DOWN -> {
                     repeatJob =
                         viewLifecycleOwner.lifecycleScope.launch {
+                            delay(ViewConfiguration.getLongPressTimeout().toLong())
                             while (isActive) {
                                 action()
                                 delay(HOLD_SEEK_REPEAT_INTERVAL_MILLIS)
