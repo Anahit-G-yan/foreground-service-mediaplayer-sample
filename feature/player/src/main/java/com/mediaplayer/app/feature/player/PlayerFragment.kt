@@ -91,28 +91,37 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     /**
      * Holding the button repeats [action] every [HOLD_SEEK_REPEAT_INTERVAL_MILLIS] until release.
      * The first repeat waits out the system long-press timeout so a plain tap (released before
-     * that) never fires [action] and only the view's own click listener runs.
+     * that) never fires [action] and only the view's own click listener runs. Once a hold has
+     * actually started repeating, the release is consumed (`true`) so the view's default touch
+     * handling doesn't also register it as a click and fire next/previous on top of the seek.
      */
     private fun holdToRepeat(
         view: View,
         action: () -> Unit,
     ) {
         var repeatJob: Job? = null
+        var isHolding = false
         view.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    isHolding = false
                     repeatJob =
                         viewLifecycleOwner.lifecycleScope.launch {
                             delay(ViewConfiguration.getLongPressTimeout().toLong())
+                            isHolding = true
                             while (isActive) {
                                 action()
                                 delay(HOLD_SEEK_REPEAT_INTERVAL_MILLIS)
                             }
                         }
+                    false
                 }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> repeatJob?.cancel()
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    repeatJob?.cancel()
+                    isHolding
+                }
+                else -> false
             }
-            false
         }
     }
 
