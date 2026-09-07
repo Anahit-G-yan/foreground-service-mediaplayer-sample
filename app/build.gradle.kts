@@ -37,8 +37,8 @@ android {
     }
 
     lint {
-        // TODO(milestone 3): NotificationHelper/MusicService are fully replaced by the Media3
-        // migration; re-enable abortOnError once the legacy implementation is gone.
+        // TODO(milestone 4): NotificationHelper/MusicService are deleted once the UI layer is
+        // rewired onto core:media; re-enable abortOnError once the legacy implementation is gone.
         abortOnError = false
     }
 }
@@ -51,6 +51,7 @@ kotlin {
 
 dependencies {
     implementation(project(":data"))
+    implementation(project(":core:media"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

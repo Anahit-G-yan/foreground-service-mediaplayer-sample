@@ -14,12 +14,15 @@ plugins {
 
 val detektPluginId = libs.plugins.detekt.get().pluginId
 val ktlintPluginId = libs.plugins.ktlint.get().pluginId
-val detektFormatting = libs.detekt.formatting
 
 subprojects {
     apply(plugin = detektPluginId)
     apply(plugin = ktlintPluginId)
 
+    // Style/formatting is ktlint's job alone. detekt-formatting bundles its own, older, pinned
+    // ktlint ruleset that disagrees with the standalone ktlint-gradle plugin on canonical style
+    // (e.g. indentation for annotated constructors) - running both fights the same code over
+    // formatting. detekt here is scoped to what ktlint doesn't cover: complexity/design/smells.
     extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         buildUponDefaultConfig = true
         autoCorrect = false
@@ -30,9 +33,5 @@ subprojects {
     extensions.configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         // TODO(milestone 5): flip to false once legacy `app` sources are migrated/cleaned up.
         ignoreFailures.set(true)
-    }
-
-    dependencies {
-        add("detektPlugins", detektFormatting.get())
     }
 }
