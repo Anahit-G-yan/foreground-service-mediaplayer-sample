@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.navigation.safeargs) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.ktlint) apply false
 }
@@ -26,12 +25,5 @@ subprojects {
     extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         buildUponDefaultConfig = true
         autoCorrect = false
-        // TODO(milestone 5): flip to false once legacy `app` sources are migrated/cleaned up.
-        ignoreFailures = true
-    }
-
-    extensions.configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        // TODO(milestone 5): flip to false once legacy `app` sources are migrated/cleaned up.
-        ignoreFailures.set(true)
     }
 }

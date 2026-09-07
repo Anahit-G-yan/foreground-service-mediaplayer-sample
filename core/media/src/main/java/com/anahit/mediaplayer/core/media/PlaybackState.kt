@@ -1,9 +1,9 @@
 package com.anahit.mediaplayer.core.media
 
+import com.anahit.mediaplayer.domain.model.MediaItem
+
 data class PlaybackState(
-    val currentItemId: String? = null,
-    val currentItemTitle: String = "",
-    val currentItemSubtitle: String? = null,
+    val currentItem: MediaItem? = null,
     val isPlaying: Boolean = false,
     val positionMillis: Long = 0L,
     val durationMillis: Long = 0L,

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/libraryFragment">
+
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="com.anahit.mediaplayer.feature.library.LibraryFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_library"
+        xmlns:tools="http://schemas.android.com/tools" />
+
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.anahit.mediaplayer.feature.player.PlayerFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_player"
+        xmlns:tools="http://schemas.android.com/tools">
+
+        <deepLink app:uri="mediaplayer://player" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/videoPlayerFragment"
+        android:name="com.anahit.mediaplayer.feature.videoplayer.VideoPlayerFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_video_player"
+        xmlns:tools="http://schemas.android.com/tools">
+
+        <argument
+            android:name="videoPath"
+            app:argType="string" />
+        <deepLink app:uri="mediaplayer://video?path={videoPath}" />
+    </fragment>
+
+</navigation>

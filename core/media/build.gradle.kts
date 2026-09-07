@@ -30,7 +30,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":domain"))
+    api(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.media3.exoplayer)

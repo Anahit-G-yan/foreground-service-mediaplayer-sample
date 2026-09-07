@@ -1,0 +1,4 @@
+<resources>
+    <string name="music_added_to_favorites">Music added to favorites</string>
+    <string name="music_removed_from_favorites">Music removed from favorites</string>
+</resources>

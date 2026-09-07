@@ -1,4 +1,4 @@
-﻿plugins {
+plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 }
@@ -28,15 +28,12 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":domain"))
     implementation(project(":core:ui"))
-    implementation(project(":core:media"))
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.ui)
 
     testImplementation(libs.junit)

@@ -30,11 +30,12 @@ private const val POSITION_UPDATE_INTERVAL_MILLIS = 500L
 class PlayerControllerImpl
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
     ) : PlayerController {
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         private var controller: MediaController? = null
         private var positionTickerJob: Job? = null
+        private var queue: List<MediaItem> = emptyList()
 
         private val _playbackState = MutableStateFlow(PlaybackState())
         override val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
@@ -55,6 +56,7 @@ class PlayerControllerImpl
             startIndex: Int,
         ) {
             val player = controller ?: return
+            queue = items
             val startPositionMillis = 0L
             player.setMediaItems(items.map { it.toPlayerItem() }, startIndex, startPositionMillis)
             player.prepare()
@@ -123,17 +125,10 @@ class PlayerControllerImpl
         }
 
         private fun updateState(player: Player) {
-            val mediaItem = player.currentMediaItem
+            val currentId = player.currentMediaItem?.mediaId
             _playbackState.update {
                 it.copy(
-                    currentItemId = mediaItem?.mediaId,
-                    currentItemTitle =
-                        mediaItem
-                            ?.mediaMetadata
-                            ?.title
-                            ?.toString()
-                            .orEmpty(),
-                    currentItemSubtitle = mediaItem?.mediaMetadata?.artist?.toString(),
+                    currentItem = queue.find { item -> item.id == currentId },
                     isPlaying = player.isPlaying,
                     positionMillis = player.currentPosition,
                     durationMillis = player.duration.coerceAtLeast(0L),

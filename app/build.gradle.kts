@@ -1,7 +1,6 @@
-﻿plugins {
+plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -35,12 +34,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
-    lint {
-        // TODO(milestone 4): NotificationHelper/MusicService are deleted once the UI layer is
-        // rewired onto core:media; re-enable abortOnError once the legacy implementation is gone.
-        abortOnError = false
-    }
 }
 
 kotlin {
@@ -50,31 +43,21 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":core:ui"))
     implementation(project(":core:media"))
+    implementation(project(":feature:library"))
+    implementation(project(":feature:player"))
+    implementation(project(":feature:videoplayer"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.viewpager2)
-    implementation(libs.androidx.media)
+    implementation(libs.androidx.splashscreen)
 
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Database
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    // Image loading
-    implementation(libs.glide)
-    annotationProcessor(libs.glide.compiler)
-
-    // Rounded image view
-    implementation(libs.roundedimageview)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

@@ -1,0 +1,12 @@
+<resources>
+    <string name="tab_music">Music</string>
+    <string name="tab_video">Video</string>
+    <string name="service_on">On</string>
+    <string name="service_off">Off</string>
+    <string name="music_plays_in_foreground">Music plays in the foreground</string>
+    <string name="music_plays_in_background">Music plays in the background</string>
+    <string name="no_music_found">No music found on this device</string>
+    <string name="failed_to_load_music">Couldn\'t load music</string>
+    <string name="no_video_found">No video found on this device</string>
+    <string name="failed_to_load_video">Couldn\'t load video</string>
+</resources>
