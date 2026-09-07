@@ -42,23 +42,9 @@ class MusicListFragment : Fragment(R.layout.fragment_music_list) {
         binding.musicsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.musicsRecyclerView.adapter = adapter
 
-        binding.foregroundSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setForegroundPlaybackEnabled(isChecked)
-        }
-
-        observeState(adapter)
-    }
-
-    private fun observeState(adapter: MediaListAdapter) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { viewModel.uiState.collect { state -> render(state, adapter) } }
-                launch {
-                    viewModel.foregroundPlaybackEnabled.collect { enabled ->
-                        binding.foregroundSwitch.isChecked = enabled
-                        binding.switchText.text = getString(if (enabled) R.string.service_on else R.string.service_off)
-                    }
-                }
+                viewModel.uiState.collect { state -> render(state, adapter) }
             }
         }
     }

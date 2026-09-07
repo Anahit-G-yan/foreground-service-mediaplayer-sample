@@ -6,30 +6,19 @@ import androidx.media3.common.C
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.anahit.mediaplayer.domain.repository.PlaybackSettingsRepository
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private const val SEEK_INCREMENT_MILLIS = 2_500L
 
 /**
  * Replaces the old MusicService: no more manual startForeground/notification bookkeeping
  * (Media3's MediaSessionService + DefaultMediaNotificationProvider handle that), and no more
- * hand-rolled position polling in the UI layer (see [PlayerControllerImpl]).
+ * hand-rolled position polling in the UI layer (see [PlayerControllerImpl]). Playback always runs
+ * as a foreground service with a notification - there's no background-only mode.
  */
 @AndroidEntryPoint
 class PlaybackService : MediaSessionService() {
-    @Inject
-    lateinit var playbackSettingsRepository: PlaybackSettingsRepository
-
     private var mediaSession: MediaSession? = null
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     override fun onCreate() {
         super.onCreate()
@@ -54,19 +43,18 @@ class PlaybackService : MediaSessionService() {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession
 
+    /**
+     * Standard Media3 guidance: keep the foreground service (and its notification) alive only
+     * while actually playing.
+     */
     override fun onTaskRemoved(rootIntent: Intent?) {
-        val session = mediaSession ?: return
-        serviceScope.launch {
-            val keepPlayingInBackground = playbackSettingsRepository.observeForegroundPlaybackEnabled().first()
-            if (!keepPlayingInBackground) {
-                session.player.pause()
-                stopSelf()
-            }
+        val player = mediaSession?.player ?: return
+        if (!player.playWhenReady || player.mediaItemCount == 0) {
+            stopSelf()
         }
     }
 
     override fun onDestroy() {
-        serviceScope.cancel()
         mediaSession?.run {
             player.release()
             release()
