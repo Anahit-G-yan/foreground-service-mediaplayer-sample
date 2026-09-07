@@ -11,19 +11,16 @@ import com.mediaplayer.app.domain.usecase.AddFavoriteUseCase
 import com.mediaplayer.app.domain.usecase.ObserveFavoritesUseCase
 import com.mediaplayer.app.domain.usecase.RemoveFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
 
 @HiltViewModel
 class PlayerViewModel
@@ -37,13 +34,15 @@ class PlayerViewModel
     ) : ViewModel() {
         val playbackState: StateFlow<PlaybackState> = playerController.playbackState
 
-        // Purely for the UI (favorite icon swap) - toggleFavorite() below does its own one-shot
-        // check instead of reading this, so it's correct even before anything has subscribed here.
-        val isCurrentTrackFavorite: StateFlow<Boolean> =
+        // Only one screen ever collects this (PlayerFragment, inside repeatOnLifecycle), so there's
+        // no point sharing it as a StateFlow - a plain Flow recomputed from the already-hot
+        // playbackState and the Room-backed favorites flow is simpler and just as correct.
+        // toggleFavorite() below does its own one-shot check instead of reading this.
+        val isCurrentTrackFavorite: Flow<Boolean> =
             combine(playbackState, observeFavoritesUseCase()) { state, favorites ->
                 val id = state.currentItem?.id
                 id != null && favorites.any { it.id == id }
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT_MILLIS), false)
+            }
 
         private val _artwork = MutableStateFlow<ByteArray?>(null)
 
