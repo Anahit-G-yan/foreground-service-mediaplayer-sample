@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.anahit.mediaplayer"
+    namespace = "com.mediaplayer.app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.anahit.mediaplayer"
+        applicationId = "com.mediaplayer.app"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

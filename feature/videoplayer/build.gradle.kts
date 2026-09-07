@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.anahit.mediaplayer.feature.videoplayer"
+    namespace = "com.mediaplayer.app.feature.videoplayer"
     compileSdk = 36
 
     defaultConfig {

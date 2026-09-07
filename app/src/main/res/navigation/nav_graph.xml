@@ -6,14 +6,14 @@
 
     <fragment
         android:id="@+id/libraryFragment"
-        android:name="com.anahit.mediaplayer.feature.library.LibraryFragment"
+        android:name="com.mediaplayer.app.feature.library.LibraryFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_library"
         xmlns:tools="http://schemas.android.com/tools" />
 
     <fragment
         android:id="@+id/playerFragment"
-        android:name="com.anahit.mediaplayer.feature.player.PlayerFragment"
+        android:name="com.mediaplayer.app.feature.player.PlayerFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_player"
         xmlns:tools="http://schemas.android.com/tools">
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/videoPlayerFragment"
-        android:name="com.anahit.mediaplayer.feature.videoplayer.VideoPlayerFragment"
+        android:name="com.mediaplayer.app.feature.videoplayer.VideoPlayerFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_video_player"
         xmlns:tools="http://schemas.android.com/tools">

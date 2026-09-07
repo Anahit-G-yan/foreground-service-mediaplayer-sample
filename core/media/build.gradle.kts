@@ -6,7 +6,7 @@
 }
 
 android {
-    namespace = "com.anahit.mediaplayer.core.media"
+    namespace = "com.mediaplayer.app.core.media"
     compileSdk = 36
 
     defaultConfig {
