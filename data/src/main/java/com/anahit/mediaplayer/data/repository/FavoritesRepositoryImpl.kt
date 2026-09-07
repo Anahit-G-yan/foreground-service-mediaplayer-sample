@@ -7,20 +7,23 @@ import com.anahit.mediaplayer.domain.model.FavoriteTrack
 import com.anahit.mediaplayer.domain.repository.FavoritesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class FavoritesRepositoryImpl(
-    private val favoriteDao: FavoriteDao,
-) : FavoritesRepository {
-    override fun observeFavorites(): Flow<List<FavoriteTrack>> =
-        favoriteDao.observeAll().map { entities ->
-            entities.map { it.toDomain() }
+class FavoritesRepositoryImpl
+    @Inject
+    constructor(
+        private val favoriteDao: FavoriteDao,
+    ) : FavoritesRepository {
+        override fun observeFavorites(): Flow<List<FavoriteTrack>> =
+            favoriteDao.observeAll().map { entities ->
+                entities.map { it.toDomain() }
+            }
+
+        override suspend fun addFavorite(track: FavoriteTrack) {
+            favoriteDao.insert(track.toEntity())
         }
 
-    override suspend fun addFavorite(track: FavoriteTrack) {
-        favoriteDao.insert(track.toEntity())
+        override suspend fun removeFavorite(trackId: String) {
+            favoriteDao.deleteByTrackId(trackId)
+        }
     }
-
-    override suspend fun removeFavorite(trackId: String) {
-        favoriteDao.deleteByTrackId(trackId)
-    }
-}

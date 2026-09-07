@@ -19,8 +19,9 @@ coroutines = "1.11.0"
 room = "2.8.4"
 datastore = "1.2.1"
 
-hilt = "2.60.1"
+hilt = "2.57.2"
 hiltNavigationFragment = "1.4.0"
+javaxInject = "1"
 
 media3 = "1.11.0"
 
@@ -65,6 +66,7 @@ androidx-datastore-preferences = { group = "androidx.datastore", name = "datasto
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-fragment = { group = "androidx.hilt", name = "hilt-navigation-fragment", version.ref = "hiltNavigationFragment" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
