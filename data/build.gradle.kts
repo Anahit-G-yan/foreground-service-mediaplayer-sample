@@ -15,7 +15,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
 }
 
 kotlin {
@@ -25,7 +24,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":domain"))
+    api(project(":domain"))
+    implementation(project(":core:common"))
     implementation(project(":core:database"))
     implementation(project(":core:datastore"))
 

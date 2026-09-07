@@ -14,6 +14,7 @@ java {
 }
 
 dependencies {
+    api(project(":core:common"))
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.junit)
