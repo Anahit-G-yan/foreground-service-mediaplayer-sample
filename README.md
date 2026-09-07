@@ -11,6 +11,9 @@ current Android standards while keeping the MVVM/XML UI layer intentionally unch
 - Favorites, with embedded track artwork.
 - Playback always runs through a Media3 foreground service with a system media notification,
   so it survives backgrounding and screen rotation.
+- Empty-state placeholders when no music/video is found, and content descriptions on every
+  playback control for screen-reader accessibility.
+- Portrait-only.
 
 ## Tech stack
 
@@ -61,7 +64,7 @@ Requires JDK 17 and Android SDK (compileSdk/targetSdk 36, minSdk 24).
 ## Testing
 
 ```bash
-./gradlew testDebugUnitTest              # unit tests (domain, data, core:media, ViewModels)
+./gradlew testDebugUnitTest              # 39 unit tests (domain, data, core:media, core:ui, ViewModels)
 ./gradlew :core:database:connectedDebugAndroidTest   # instrumented Room DAO test (needs a device/emulator)
 ./gradlew ktlintCheck detekt             # static analysis
 ```
