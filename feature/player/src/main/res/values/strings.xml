@@ -1,4 +1,13 @@
 <resources>
     <string name="music_added_to_favorites">Music added to favorites</string>
     <string name="music_removed_from_favorites">Music removed from favorites</string>
+
+    <string name="cd_favorite_add">Add to favorites</string>
+    <string name="cd_favorite_remove">Remove from favorites</string>
+    <string name="cd_play">Play</string>
+    <string name="cd_pause">Pause</string>
+    <string name="cd_previous">Previous track</string>
+    <string name="cd_next">Next track</string>
+    <string name="cd_repeat_off">Repeat off, tap to repeat current track</string>
+    <string name="cd_repeat_one">Repeat current track, tap to turn off</string>
 </resources>

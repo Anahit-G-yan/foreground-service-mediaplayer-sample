@@ -1,12 +1,12 @@
 package com.anahit.mediaplayer.feature.player
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -56,7 +56,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         holdToRepeat(binding.prevButton) { viewModel.seekBack() }
 
         binding.repeatOffIcon.setOnClickListener { viewModel.toggleRepeatCurrentTrack() }
-        binding.repeatOneIcon.setOnClickListener { viewModel.toggleRepeatCurrentTrack() }
+        binding.repeatOneIndicator.setOnClickListener { viewModel.toggleRepeatCurrentTrack() }
 
         binding.favoriteIcon.setOnClickListener {
             viewModel.toggleFavorite()
@@ -144,10 +144,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         binding.durationText.text = state.durationMillis.formatAsMinutesAndSeconds()
 
         binding.playPauseButton.setImageResource(if (state.isPlaying) CoreUiR.drawable.pause else CoreUiR.drawable.play)
+        binding.playPauseButton.contentDescription =
+            getString(if (state.isPlaying) R.string.cd_pause else R.string.cd_play)
 
         val repeatsCurrentTrack = state.repeatMode == RepeatMode.ONE
         binding.repeatOffIcon.visibility = if (repeatsCurrentTrack) View.GONE else View.VISIBLE
-        binding.repeatOneIcon.visibility = if (repeatsCurrentTrack) View.VISIBLE else View.GONE
+        binding.repeatOneIndicator.visibility = if (repeatsCurrentTrack) View.VISIBLE else View.GONE
     }
 
     private fun renderArtwork(artwork: ByteArray?) {
@@ -162,11 +164,15 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 .asBitmap()
                 .load(artwork)
                 .into(binding.backgroundImage)
-            binding.backgroundImage.setColorFilter(Color.parseColor("#8A000000"))
+            binding.backgroundImage.setColorFilter(
+                ContextCompat.getColor(requireContext(), CoreUiR.color.imageColor),
+            )
         } else {
             binding.thumbnailImage.setImageResource(CoreUiR.drawable.music)
             binding.backgroundImage.setImageResource(CoreUiR.drawable.background)
-            binding.backgroundImage.setColorFilter(Color.parseColor("#6D000000"))
+            binding.backgroundImage.setColorFilter(
+                ContextCompat.getColor(requireContext(), CoreUiR.color.transparent),
+            )
         }
     }
 

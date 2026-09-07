@@ -9,8 +9,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.anahit.mediaplayer.core.ui.ListPlaceholder
 import com.anahit.mediaplayer.core.ui.NavDestinations
 import com.anahit.mediaplayer.core.ui.UiState
+import com.anahit.mediaplayer.core.ui.renderListVisibility
 import com.anahit.mediaplayer.core.ui.viewBinding
 import com.anahit.mediaplayer.domain.model.Video
 import com.anahit.mediaplayer.feature.library.R
@@ -48,16 +50,16 @@ class VideoListFragment : Fragment(R.layout.fragment_video_list) {
         state: UiState<List<Video>>,
         adapter: MediaListAdapter,
     ) {
-        binding.loadingIndicator.visibility = if (state is UiState.Loading) View.VISIBLE else View.GONE
-        binding.videoRecyclerView.visibility = if (state is UiState.Success) View.VISIBLE else View.GONE
-        binding.messageText.visibility =
-            if (state is UiState.Empty || state is UiState.Error) View.VISIBLE else View.GONE
+        state.renderListVisibility(
+            loadingIndicator = binding.loadingIndicator,
+            content = binding.videoRecyclerView,
+            placeholder = ListPlaceholder(binding.placeholderContainer, binding.messageText),
+            emptyMessageRes = R.string.no_video_found,
+            errorMessageRes = R.string.failed_to_load_video,
+        )
 
-        when (state) {
-            is UiState.Success -> adapter.submitList(state.data)
-            is UiState.Empty -> binding.messageText.text = getString(R.string.no_video_found)
-            is UiState.Error -> binding.messageText.text = getString(R.string.failed_to_load_video)
-            is UiState.Loading -> Unit
+        if (state is UiState.Success) {
+            adapter.submitList(state.data)
         }
     }
 }

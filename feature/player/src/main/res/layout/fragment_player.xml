@@ -27,7 +27,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
             android:src="@drawable/favorite"
-            android:contentDescription="@null" />
+            android:contentDescription="@string/cd_favorite_add" />
 
         <ImageView
             android:id="@+id/favoritedIcon"
@@ -37,7 +37,7 @@
             android:layout_marginEnd="15dp"
             android:src="@drawable/heart"
             android:visibility="gone"
-            android:contentDescription="@null" />
+            android:contentDescription="@string/cd_favorite_remove" />
 
     </RelativeLayout>
 
@@ -104,15 +104,35 @@
                 android:src="@drawable/loop"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:contentDescription="@null" />
+                android:contentDescription="@string/cd_repeat_off" />
 
-            <ImageView
-                android:id="@+id/repeatOneIcon"
-                android:src="@drawable/next_music"
-                android:visibility="gone"
+            <FrameLayout
+                android:id="@+id/repeatOneIndicator"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:contentDescription="@null" />
+                android:visibility="gone"
+                android:contentDescription="@string/cd_repeat_one">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/loop"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_gravity="bottom|end"
+                    android:background="@drawable/repeat_one_badge_background"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="1"
+                    android:textColor="@color/black"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:contentDescription="@null" />
+
+            </FrameLayout>
 
         </RelativeLayout>
 
@@ -142,7 +162,7 @@
                 android:layout_marginEnd="30dp"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:contentDescription="@null" />
+                android:contentDescription="@string/cd_previous" />
 
             <ImageView
                 android:id="@+id/playPauseButton"
@@ -152,7 +172,7 @@
                 android:layout_below="@+id/positionText"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:contentDescription="@null" />
+                android:contentDescription="@string/cd_play" />
 
             <ImageView
                 android:id="@+id/nextButton"
@@ -164,7 +184,7 @@
                 android:layout_below="@+id/positionText"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:contentDescription="@null" />
+                android:contentDescription="@string/cd_next" />
 
         </RelativeLayout>
     </LinearLayout>

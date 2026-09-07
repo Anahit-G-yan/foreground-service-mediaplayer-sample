@@ -1,13 +1,17 @@
 package com.anahit.mediaplayer
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 private val MEDIA_PERMISSIONS_33_PLUS =
@@ -24,7 +28,7 @@ class MainActivity : AppCompatActivity() {
             if (results.values.any { it }) {
                 setContentView(R.layout.activity_main)
             } else {
-                finish()
+                showPermissionRationale()
             }
         }
 
@@ -39,6 +43,28 @@ class MainActivity : AppCompatActivity() {
         } else {
             requestPermissions.launch(mediaPermissions())
         }
+    }
+
+    /**
+     * Explains why the permission is needed instead of silently closing: the user may have
+     * dismissed the system prompt without understanding what it was for, or denied it
+     * permanently, in which case the only way back in is the app's system settings screen.
+     */
+    private fun showPermissionRationale() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.permission_rationale_title)
+            .setMessage(R.string.permission_rationale_message)
+            .setCancelable(false)
+            .setPositiveButton(R.string.action_open_settings) { _, _ -> openAppSettings() }
+            .setNegativeButton(R.string.action_exit) { _, _ -> finish() }
+            .show()
+    }
+
+    private fun openAppSettings() {
+        val intent =
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+        startActivity(intent)
+        finish()
     }
 
     private fun hasMediaPermission(): Boolean =

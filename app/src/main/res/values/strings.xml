@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MusicPlayer</string>
+
+    <string name="permission_rationale_title">Media access needed</string>
+    <string name="permission_rationale_message">
+        MusicPlayer needs access to your device\'s music and videos to show your library and play them.
+    </string>
+    <string name="action_open_settings">Open settings</string>
+    <string name="action_exit">Exit</string>
 </resources>

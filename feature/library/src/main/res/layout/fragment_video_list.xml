@@ -16,14 +16,31 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/messageText"
+    <LinearLayout
+        android:id="@+id/placeholderContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="24dp"
         android:gravity="center"
-        android:textColor="@color/white"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginBottom="16dp"
+            android:alpha="0.6"
+            android:src="@drawable/music"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/messageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
 
 </FrameLayout>

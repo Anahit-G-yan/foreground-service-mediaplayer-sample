@@ -29,7 +29,7 @@ internal fun isEligibleTrack(
 class MediaStoreRepositoryImpl
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
         private val dispatcherProvider: DispatcherProvider,
     ) : MediaRepository {
         override suspend fun getTracks(): Outcome<List<Track>> =
