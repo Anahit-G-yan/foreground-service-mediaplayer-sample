@@ -107,13 +107,14 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 MotionEvent.ACTION_DOWN -> {
                     repeatJob?.cancel()
 
-                    repeatJob = viewLifecycleOwner.lifecycleScope.launch {
-                        delay(ViewConfiguration.getLongPressTimeout().toLong())
-                        while (isActive) {
-                            action()
-                            delay(HOLD_SEEK_REPEAT_INTERVAL_MILLIS)
+                    repeatJob =
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            delay(ViewConfiguration.getLongPressTimeout().toLong())
+                            while (isActive) {
+                                action()
+                                delay(HOLD_SEEK_REPEAT_INTERVAL_MILLIS)
+                            }
                         }
-                    }
                     false
                 }
 
@@ -174,9 +175,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
             val playPauseIcon = if (state.isPlaying) CoreUiR.drawable.pause else CoreUiR.drawable.play
             playPauseButton.setImageResource(playPauseIcon)
-            playPauseButton.contentDescription = getString(
-                if (state.isPlaying) R.string.cd_pause else R.string.cd_play
-            )
+            playPauseButton.contentDescription =
+                getString(
+                    if (state.isPlaying) R.string.cd_pause else R.string.cd_play,
+                )
 
             val repeatsCurrentTrack = state.repeatMode == RepeatMode.ONE
             repeatOffIcon.isVisible = !repeatsCurrentTrack
@@ -188,16 +190,18 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         with(binding) {
             if (artwork != null) {
                 backgroundImage.setColorFilter(
-                    ContextCompat.getColor(requireContext(), CoreUiR.color.imageColor)
+                    ContextCompat.getColor(requireContext(), CoreUiR.color.imageColor),
                 )
 
-                Glide.with(thumbnailImage)
+                Glide
+                    .with(thumbnailImage)
                     .asBitmap()
                     .load(artwork)
                     .error(CoreUiR.drawable.music)
                     .into(thumbnailImage)
 
-                Glide.with(backgroundImage)
+                Glide
+                    .with(backgroundImage)
                     .asBitmap()
                     .load(artwork)
                     .error(CoreUiR.drawable.background)
