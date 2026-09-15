@@ -7,6 +7,7 @@ import android.view.ViewConfiguration
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -100,26 +101,35 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         action: () -> Unit,
     ) {
         var repeatJob: Job? = null
-        var isHolding = false
-        view.setOnTouchListener { _, event ->
+
+        view.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    isHolding = false
-                    repeatJob =
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            delay(ViewConfiguration.getLongPressTimeout().toLong())
-                            isHolding = true
-                            while (isActive) {
-                                action()
-                                delay(HOLD_SEEK_REPEAT_INTERVAL_MILLIS)
-                            }
+                    repeatJob?.cancel()
+
+                    repeatJob = viewLifecycleOwner.lifecycleScope.launch {
+                        delay(ViewConfiguration.getLongPressTimeout().toLong())
+                        while (isActive) {
+                            action()
+                            delay(HOLD_SEEK_REPEAT_INTERVAL_MILLIS)
                         }
+                    }
                     false
                 }
+
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    val wasHolding = repeatJob?.let { it.isActive && !it.isCompleted } ?: false
+
                     repeatJob?.cancel()
-                    isHolding
+                    repeatJob = null
+
+                    if (!wasHolding) {
+                        v.performClick()
+                    }
+
+                    wasHolding
                 }
+
                 else -> false
             }
         }
@@ -132,8 +142,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 launch { viewModel.artwork.collect(::renderArtwork) }
                 launch {
                     viewModel.isCurrentTrackFavorite.collect { isFavorite ->
-                        binding.favoriteIcon.visibility = if (isFavorite) View.GONE else View.VISIBLE
-                        binding.favoritedIcon.visibility = if (isFavorite) View.VISIBLE else View.GONE
+                        binding.favoriteIcon.isVisible = !isFavorite
+                        binding.favoritedIcon.isVisible = isFavorite
                     }
                 }
             }
@@ -141,47 +151,63 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     }
 
     private fun renderPlaybackState(state: PlaybackState) {
-        val track = state.currentItem as? Track
-        binding.titleText.text = track?.title
-        binding.artistText.text = track?.artist
+        with(binding) {
+            val track = state.currentItem as? Track
 
-        binding.positionSeekBar.max = state.durationMillis.toInt()
-        if (!isUserSeeking) {
-            binding.positionSeekBar.progress = state.positionMillis.toInt()
+            if (titleText.text != track?.title) titleText.text = track?.title
+            if (artistText.text != track?.artist) artistText.text = track?.artist
+
+            positionSeekBar.max = state.durationMillis.toInt()
+            if (!isUserSeeking) {
+                positionSeekBar.progress = state.positionMillis.toInt()
+            }
+
+            val currentPositionFormatted = state.positionMillis.formatAsMinutesAndSeconds()
+            if (positionText.text != currentPositionFormatted) {
+                positionText.text = currentPositionFormatted
+            }
+
+            val durationFormatted = state.durationMillis.formatAsMinutesAndSeconds()
+            if (durationText.text != durationFormatted) {
+                durationText.text = durationFormatted
+            }
+
+            val playPauseIcon = if (state.isPlaying) CoreUiR.drawable.pause else CoreUiR.drawable.play
+            playPauseButton.setImageResource(playPauseIcon)
+            playPauseButton.contentDescription = getString(
+                if (state.isPlaying) R.string.cd_pause else R.string.cd_play
+            )
+
+            val repeatsCurrentTrack = state.repeatMode == RepeatMode.ONE
+            repeatOffIcon.isVisible = !repeatsCurrentTrack
+            repeatOneIndicator.isVisible = repeatsCurrentTrack
         }
-        binding.positionText.text = state.positionMillis.formatAsMinutesAndSeconds()
-        binding.durationText.text = state.durationMillis.formatAsMinutesAndSeconds()
-
-        binding.playPauseButton.setImageResource(if (state.isPlaying) CoreUiR.drawable.pause else CoreUiR.drawable.play)
-        binding.playPauseButton.contentDescription =
-            getString(if (state.isPlaying) R.string.cd_pause else R.string.cd_play)
-
-        val repeatsCurrentTrack = state.repeatMode == RepeatMode.ONE
-        binding.repeatOffIcon.visibility = if (repeatsCurrentTrack) View.GONE else View.VISIBLE
-        binding.repeatOneIndicator.visibility = if (repeatsCurrentTrack) View.VISIBLE else View.GONE
     }
 
     private fun renderArtwork(artwork: ByteArray?) {
-        if (artwork != null) {
-            Glide
-                .with(binding.thumbnailImage)
-                .asBitmap()
-                .load(artwork)
-                .into(binding.thumbnailImage)
-            Glide
-                .with(binding.backgroundImage)
-                .asBitmap()
-                .load(artwork)
-                .into(binding.backgroundImage)
-            binding.backgroundImage.setColorFilter(
-                ContextCompat.getColor(requireContext(), CoreUiR.color.imageColor),
-            )
-        } else {
-            binding.thumbnailImage.setImageResource(CoreUiR.drawable.music)
-            binding.backgroundImage.setImageResource(CoreUiR.drawable.background)
-            binding.backgroundImage.setColorFilter(
-                ContextCompat.getColor(requireContext(), CoreUiR.color.transparent),
-            )
+        with(binding) {
+            if (artwork != null) {
+                backgroundImage.setColorFilter(
+                    ContextCompat.getColor(requireContext(), CoreUiR.color.imageColor)
+                )
+
+                Glide.with(thumbnailImage)
+                    .asBitmap()
+                    .load(artwork)
+                    .error(CoreUiR.drawable.music)
+                    .into(thumbnailImage)
+
+                Glide.with(backgroundImage)
+                    .asBitmap()
+                    .load(artwork)
+                    .error(CoreUiR.drawable.background)
+                    .into(backgroundImage)
+            } else {
+                backgroundImage.clearColorFilter()
+
+                thumbnailImage.setImageResource(CoreUiR.drawable.music)
+                backgroundImage.setImageResource(CoreUiR.drawable.background)
+            }
         }
     }
 
